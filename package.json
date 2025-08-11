@@ -1,16 +1,5 @@
 {
-  "name": "yoco-paiement",
-  "version": "1.0.0",
-  "description": "Formulaire de paiement Yoco",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.18.2"
-  },
-  "engines": {
-    "node": "20.x"
+    "firebase": "^12.0.0"
   }
 }

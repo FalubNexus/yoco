@@ -79,5 +79,5 @@ app.post('/paiement', async (req, res) => {
 // Démarrage du serveur
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Serveur lancé sur le port ${PORT}`);
-  console.log(`🔗 Accès : https://yoco.onrender.com`);
+  console.log(`🔗 Accès : https://yoco-jsrb.onrender.com`);
 });

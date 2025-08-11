@@ -77,7 +77,7 @@
             responseEl.innerText = "Paiement en cours...";
 
             // Envoie au backend (même domaine)
-            fetch('/paiement', {
+            fetch('https://yoco-jsrb.onrender.com/paiement', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
