@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Paiement Yoco (Montant Dynamique)</title>
+  <script src="https://js.yoco.com/sdk/v1/yoco-sdk-web.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      text-align: center;
+      background-color: #f2f2f2;
+    }
+    h1 {
+      color: #333;
+    }
+    input, button {
+      padding: 1rem;
+      font-size: 1rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #0077ff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005dc1;
+    }
+    #response {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Paiement sécurisé via Yoco</h1>
+  <label for="montant">Entrez le montant en Rands (ZAR) :</label><br />
+  <input type="number" id="montant" placeholder="ex : 100" min="1" /><br />
+  <button id="payButton">Payer maintenant</button>
+  <div id="response"></div>
+
+  <script>
+    const yoco = new window.YocoSDK({
+      publicKey: 'pk_test_8e0e00b6gVwvy8Kbeb74' // Remplace par ta clé publique
+    });
+
+    document.getElementById('payButton').addEventListener('click', () => {
+      const montantRand = document.getElementById('montant').value;
+      const responseEl = document.getElementById('response');
+
+      if (!montantRand || isNaN(montantRand) || montantRand <= 0) {
+        responseEl.style.color = 'red';
+        responseEl.innerText = "⛔ Veuillez entrer un montant valide.";
+        return;
+      }
+
+      const montantCents = Math.round(parseFloat(montantRand) * 100);
+
+      yoco.showPopup({
+        amountInCents: montantCents,
+        currency: 'ZAR',
+        name: 'Cape Town Accueil',
+        description: `Paiement de R${montantRand}`,
+        callback: function (result) {
+          if (result.error) {
+            responseEl.style.color = 'red';
+            responseEl.innerText = "Erreur : " + result.error.message;
+          } else {
+            const token = result.id;
+            responseEl.style.color = 'blue';
+            responseEl.innerText = "Paiement en cours...";
+
+            // Envoie au backend (même domaine)
+            fetch('/paiement', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                token: token,
+                amount: montantCents
+              })
+            })
+            .then(res => res.json())
+            .then(data => {
+              responseEl.style.color = 'green';
+              responseEl.innerText = data.message;
+            })
+            .catch(err => {
+              responseEl.style.color = 'red';
+              responseEl.innerText = "Erreur : impossible de contacter le serveur.";
+            });
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
